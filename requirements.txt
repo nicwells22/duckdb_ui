@@ -1,0 +1,6 @@
+flask
+flask-cors
+duckdb
+python-dotenv
+pandas
+numpy

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Query Panel -->
+<div class="tab-pane fade show active" id="query-panel" role="tabpanel" aria-labelledby="query-tab">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">SQL Query</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="run-query">
+                    <i class="bi bi-play-fill"></i> Run (Ctrl+Enter)
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="format-query">
+                    <i class="bi bi-braces"></i> Format
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-query">
+                    <i class="bi bi-trash"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor" class="border rounded mb-3" style="height: 300px;"></div>
+    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5>Results</h5>
+        <div class="text-muted small" id="query-info"></div>
+    </div>
+    
+    <div class="table-responsive">
+        <div id="results" class="border rounded p-3 bg-light">
+            <div class="text-center text-muted">
+                <i class="bi bi-arrow-return-left d-block mb-2" style="font-size: 2rem;"></i>
+                <p>Enter a query and click "Run" or press Ctrl+Enter to see results</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Database Explorer Panel -->
+<div class="tab-pane fade" id="explorer-panel" role="tabpanel" aria-labelledby="explorer-tab">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Database Explorer</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button class="btn btn-sm btn-outline-secondary" id="refresh-explorer">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-diagram-3"></i> Schema
+                </div>
+                <div class="card-body p-0">
+                    <div id="schema-tree" class="list-group list-group-flush">
+                        <div class="text-center p-3 text-muted">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            Loading schema...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-table"></i> <span id="table-preview-title">Table Preview</span></span>
+                    <span class="badge bg-secondary" id="row-count"></span>
+                </div>
+                <div class="card-body p-0">
+                    <div id="table-preview" class="table-responsive">
+                        <div class="text-center p-5 text-muted">
+                            <i class="bi bi-table d-block mb-2" style="font-size: 2rem;"></i>
+                            <p>Select a table to preview its data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Panel -->
+<div class="tab-pane fade" id="import-panel" role="tabpanel" aria-labelledby="import-tab">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Import CSV</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form id="upload-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv-file" class="form-label">CSV File</label>
+                            <input class="form-control" type="file" id="csv-file" name="file" accept=".csv" required>
+                            <div class="form-text">Select a CSV file to import into the database.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="table-name" class="form-label">Table Name</label>
+                            <input type="text" class="form-control" id="table-name" name="table_name" required 
+                                   placeholder="Enter a name for the new table">
+                            <div class="form-text">This will be the name of the new table in the database.</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="import-btn">
+                                <i class="bi bi-upload"></i> Import CSV
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="bi bi-info-circle"></i> Import Instructions
+                </div>
+                <div class="card-body">
+                    <h5>CSV Format Requirements:</h5>
+                    <ul>
+                        <li>First row must contain column headers</li>
+                        <li>Use commas (,) as delimiters</li>
+                        <li>Use double quotes (") for text qualifiers</li>
+                        <li>Use UTF-8 encoding</li>
+                    </ul>
+                    <p class="mb-0">The import process will automatically detect column types and create an appropriate table structure.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center d-none" id="loading-overlay">
+    <div class="text-center text-white">
+        <div class="spinner-border mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mb-0" id="loading-text">Processing...</p>
+    </div>
+</div>
+{% endblock %}
