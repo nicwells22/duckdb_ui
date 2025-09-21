@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             await switchDatabase('default');
         }
         
+        // Load schema for the current database
+        if (currentDatabase) {
+            await loadSchema();
+        }
+        
         // Set initial active tab
         const queryTab = document.querySelector('[data-bs-target="#query-panel"]');
         if (queryTab) {
@@ -670,18 +675,23 @@ async function loadSchema() {
         
         if (data && data.success) {
             schemaData = data.data || {};
-            renderSchemaTree();
+            // Only try to render schema tree if the element exists
+            if (document.getElementById('schema-tree')) {
+                renderSchemaTree();
+            }
             updateSchemaList();
         } else {
             throw new Error(data?.error || 'Failed to load schema');
         }
     } catch (error) {
         console.error('Error loading schema:', error);
-        schemaTree.innerHTML = `
-            <div class="alert alert-danger m-3" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                Failed to load schema: ${error.message}
-            </div>`;
+        if (schemaTree) {
+            schemaTree.innerHTML = `
+                <div class="alert alert-danger m-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Failed to load schema: ${error.message}
+                </div>`;
+        }
     } finally {
         hideLoading();
     }

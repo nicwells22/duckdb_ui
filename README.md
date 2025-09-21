@@ -3,9 +3,9 @@
 A user-friendly web interface for interacting with DuckDB databases. This application allows you to:
 - Connect to and manage multiple DuckDB databases
 - Execute SQL queries with syntax highlighting
-- View and explore database schemas
+- Browse database schemas
 - Upload and import CSV files
-- Visualize query results with interactive tables
+- View query results with sortable tables
 
 ## 🚀 Quick Start
 
@@ -65,9 +65,10 @@ A user-friendly web interface for interacting with DuckDB databases. This applic
 4. Map columns to appropriate data types if needed
 
 ### Managing Databases
-- View all available databases in the sidebar
+- View and manage all databases in the left sidebar
 - Click on a database to make it active
-- The active database is shown at the top of the query editor
+- The active database is shown in the sidebar
+- Right-click on tables to view options
 
 ## 🛠️ Development
 
@@ -116,7 +117,7 @@ Contributions are welcome! Please follow these steps:
 ## 📊 Features
 
 - **SQL Editor**: Write and execute SQL queries with syntax highlighting
-- **Schema Browser**: Explore database structure with an intuitive interface
+- **Schema Browser**: Explore database structure in the left sidebar
 - **Data Import**: Easily import CSV files into your database
 - **Multiple Databases**: Connect to and manage multiple DuckDB databases
 - **Responsive Design**: Works on desktop and tablet devices
@@ -156,4 +157,4 @@ For support, please open an issue on the [GitHub repository](https://github.com/
 
 ---
 
-Made with ❤️ by [Your Name] | [Your Website]
+Made with ❤️ by Nicholas Wells
