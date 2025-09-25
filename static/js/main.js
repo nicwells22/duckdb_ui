@@ -27,6 +27,15 @@ const currentDbElement = document.getElementById('current-db');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize modals with no backdrop
+    const modalElement = document.getElementById('newDatabaseModal');
+    if (modalElement) {
+        new bootstrap.Modal(modalElement, {
+            backdrop: false,  // This prevents the backdrop from appearing
+            keyboard: true
+        });
+    }
+    
     try {
         await initializeEditor();
         setupEventListeners();
@@ -227,11 +236,22 @@ function setupSQLLanguageFeatures() {
 function setupEventListeners() {
     // New database form submission
     const newDbForm = document.getElementById('new-db-form');
+    const createDbBtn = document.getElementById('create-db-btn');
+    
     if (newDbForm) {
+        // Handle form submission
         newDbForm.addEventListener('submit', (e) => {
             e.preventDefault();
             createNewDatabase();
         });
+        
+        // Also handle the create button click
+        if (createDbBtn) {
+            createDbBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                createNewDatabase();
+            });
+        }
     }
     
     // Refresh schema button
@@ -532,11 +552,17 @@ async function createNewDatabase() {
             // Clear the input
             dbNameInput.value = '';
             
+            // Reload the databases list to include the new one
+            await loadDatabases();
+            
+            // Update the UI with the new database list
+            updateDatabaseList();
+            
             // Switch to the new database
             await switchDatabase(dbName);
             
             // Show success message
-            showSuccess(`Database '${dbName}' created successfully`);
+            showSuccess(`Database '${dbName}' created and selected`);
         } else {
             throw new Error(data.error || 'Failed to create database');
         }
@@ -547,6 +573,29 @@ async function createNewDatabase() {
         // Reset button state
         createBtn.disabled = false;
         spinner.classList.add('d-none');
+        
+        // Ensure modal is properly hidden and backdrop is removed
+        const modalElement = document.getElementById('newDatabaseModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                // Hide the modal
+                modal.hide();
+                
+                // Manually remove the backdrop if it exists
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+                
+                // Re-enable body scrolling
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                // Remove the modal-open class from body
+                document.body.classList.remove('modal-open');
+            }
+        }
     }
 }
 
@@ -1298,49 +1347,15 @@ function insertAtCursor(text) {
     editor.focus();
 }
 
-// Show loading overlay with message
-function showLoading(message = 'Loading...') {
-    if (!loadingOverlay || !loadingText) {
-        console.warn('Loading overlay elements not found');
-        return;
-    }
-    
-    loadingText.textContent = message;
-    loadingOverlay.classList.remove('d-none');
-    
-    // Ensure the loading overlay is visible and interactive
-    loadingOverlay.style.display = 'flex';
-    loadingOverlay.style.justifyContent = 'center';
-    loadingOverlay.style.alignItems = 'center';
-    loadingOverlay.style.position = 'fixed';
-    loadingOverlay.style.top = '0';
-    loadingOverlay.style.left = '0';
-    loadingOverlay.style.width = '100%';
-    loadingOverlay.style.height = '100%';
-    loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    loadingOverlay.style.zIndex = '9999';
-    
-    // Add a small delay to show the loading indicator for at least 500ms
-    // to prevent flickering for very fast operations
-    loadingOverlay._showTime = Date.now();
-    loadingOverlay._minShowTime = 500;
+// Loading overlay functions disabled
+function showLoading() {
+    // No-op - loading overlay disabled
+    console.log('Loading... (overlay disabled)');
 }
 
-// Hide loading overlay
 function hideLoading() {
-    if (!loadingOverlay) return;
-    
-    // Calculate remaining time to show the loading indicator
-    const showTime = Date.now() - (loadingOverlay._showTime || 0);
-    const remainingTime = Math.max(0, (loadingOverlay._minShowTime || 0) - showTime);
-    
-    // Hide the loading overlay after the remaining time
-    setTimeout(() => {
-        if (loadingOverlay) {
-            loadingOverlay.classList.add('d-none');
-            loadingOverlay.style.display = 'none';
-        }
-    }, remainingTime);
+    // No-op - loading overlay disabled
+    console.log('Loading complete (overlay disabled)');
 }
 
 // Show success message with toast notification
